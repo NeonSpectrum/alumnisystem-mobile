@@ -16,7 +16,7 @@ const AlumniNavigator = createStackNavigator(
         <Icon
           name="three-bars"
           size={30}
-          color="white"
+          color="black"
           style={{ paddingLeft: 20 }}
           onPress={() => navigation.openDrawer()}
         />

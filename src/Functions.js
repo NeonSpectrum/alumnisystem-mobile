@@ -9,9 +9,9 @@ const fetchHTML = (url, headers, timeout = 10000) => {
     })
       .then(response => response.text())
       .then(response => resolve(response))
-      .catch(err => reject())
+      .catch(err => reject(new Error(err)))
 
-    setTimeout(reject, timeout, new Error('Connection timed out'))
+    if (timeout) setTimeout(reject, timeout, new Error('Connection timed out'))
   })
 }
 
@@ -26,9 +26,9 @@ const fetchJSON = (url, headers, timeout = 10000) => {
     })
       .then(response => response.json())
       .then(response => resolve(response))
-      .catch(err => reject())
+      .catch(err => reject(new Error(err)))
 
-    setTimeout(reject, timeout, new Error('Connection timed out'))
+    if (timeout) setTimeout(reject, timeout, new Error('Connection timed out'))
   })
 }
 

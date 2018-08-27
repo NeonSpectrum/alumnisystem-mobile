@@ -1,36 +1,68 @@
+import Expo from 'expo'
 import React, { Component } from 'react'
-import { DrawerItems } from 'react-navigation'
+import { DrawerItems, StackActions, NavigationActions } from 'react-navigation'
 import { createDrawerNavigator } from 'react-navigation-drawer'
-import { StyleSheet, Text, TextInput, View, Button, Image, TouchableOpacity, ScrollView } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Button,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+  AsyncStorage
+} from 'react-native'
+import { connect } from 'react-redux'
+import { store } from '../../App'
+
+import Loading from '../Components/Loading.component.js'
 
 import DashboardNavigator from '../Navigators/Dashboard.navigator'
 import SettingsNavigator from '../Navigators/Settings.navigator'
 import AlumniNavigator from '../Navigators/Alumni.navigator'
 
-import { processLogout } from '../Components/Logout.component'
+import { fetchProfilePath, logout } from '../Controllers/User.controller'
 
-const DrawerContent = props => (
-  <View style={{ flex: 1 }}>
-    <View style={styles.header}>
-      <Image style={styles.picture} source={require('../../assets/id.jpg')} />
+var uri = require('../../assets/user-default.png')
+
+const DrawerContent = props => {
+  return (
+    <View style={{ flex: 1 }}>
+      <View style={styles.header}>
+        <Image style={styles.picture} source={uri} />
+      </View>
+      <DrawerItems
+        {...props}
+        onItemPress={({ route, focused }) => {
+          if (route.key === 'Logout') {
+            Alert.alert('Logout', 'Are you sure do you want to logout?', [
+              {
+                text: 'OK',
+                onPress: async () => {
+                  store.dispatch(logout())
+                  Expo.Util.reload()
+                }
+              },
+              {
+                text: 'Cancel',
+                style: 'cancel'
+              }
+            ])
+          } else {
+            props.onItemPress({ route, focused })
+          }
+        }}
+      />
+      <View style={styles.footer}>
+        <Image style={styles.logo} source={require('../../assets/rnd-logo.png')} />
+        <Text style={styles.footerText}>This is made in collaboration with</Text>
+        <Text style={styles.footerText}>UE CCSS Research and Development Unit</Text>
+      </View>
     </View>
-    <DrawerItems
-      {...props}
-      onItemPress={({ route, focused }) => {
-        if (route.key === 'Logout') {
-          processLogout(props)
-        } else {
-          props.onItemPress({ route, focused })
-        }
-      }}
-    />
-    <View style={styles.footer}>
-      <Image style={styles.logo} source={require('../../assets/rnd-logo.png')} />
-      <Text style={styles.footerText}>This is made in collaboration with</Text>
-      <Text style={styles.footerText}>UE CCSS Research and Development Unit</Text>
-    </View>
-  </View>
-)
+  )
+}
 
 const DrawerStack = createDrawerNavigator(
   {
@@ -57,6 +89,30 @@ const DrawerStack = createDrawerNavigator(
   }
 )
 
+class Drawer extends Component {
+  static navigationOptions = { header: null }
+
+  constructor(props) {
+    super(props)
+    this.fetchData = this.fetchData.bind(this)
+  }
+
+  componentDidMount() {
+    this.fetchData()
+  }
+
+  fetchData() {
+    this.props.fetchProfilePath()
+  }
+
+  render() {
+    let { loading = true, error } = this.props
+    if (loading) return <Loading />
+    else if (error) return <Error text="Cannot connect to server!" onRefresh={this.fetchData} />
+    else return <DrawerStack />
+  }
+}
+
 const styles = StyleSheet.create({
   header: {
     backgroundColor: '#F4054B',
@@ -74,7 +130,7 @@ const styles = StyleSheet.create({
   },
   logo: {
     height: 50,
-    width: 50
+    width: 56
   },
   footerText: {
     fontSize: 12
@@ -90,4 +146,22 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   }
 })
-export default DrawerStack
+
+const mapStateToProps = ({ UserReducer, UploadReducer }) => {
+  let { drawer } = UserReducer
+  if (drawer) {
+    if (drawer.path) uri = { uri: drawer.path }
+    return { loading: drawer.loading }
+  }
+  return {}
+}
+
+const mapDispatchToProps = {
+  fetchProfilePath,
+  logout
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Drawer)

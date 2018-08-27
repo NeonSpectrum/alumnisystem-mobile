@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation'
+import { createStackNavigator, NavigationActions, StackActions, DrawerActions } from 'react-navigation'
 import Icon from 'react-native-vector-icons/Octicons'
 
 import DashboardScreen from '../Screens/Dashboard.screen'
@@ -10,18 +10,20 @@ const DashboardNavigator = createStackNavigator(
   },
   {
     headerMode: 'screen',
-    navigationOptions: ({ navigation }) => ({
-      headerTransparent: true,
-      headerLeft: (
-        <Icon
-          name="three-bars"
-          size={30}
-          color="white"
-          style={{ paddingLeft: 20 }}
-          onPress={() => navigation.openDrawer()}
-        />
-      )
-    })
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTransparent: true,
+        headerLeft: (
+          <Icon
+            name="three-bars"
+            size={30}
+            color="black"
+            style={{ paddingLeft: 20 }}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+          />
+        )
+      }
+    }
   }
 )
 

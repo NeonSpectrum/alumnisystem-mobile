@@ -13,8 +13,9 @@ export async function takePhoto() {
       allowsEditing: true,
       aspect: [1, 1]
     })
-    uploadPhoto(pickerResult.uri)
+    return pickerResult.uri
   }
+  return false
 }
 
 export async function uploadPhoto(uri) {
@@ -29,11 +30,17 @@ export async function uploadPhoto(uri) {
     type: `image/${fileType}`
   })
 
-  return fetchJSON(`${api_url}/user/${id}/upload`, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
+  let res = await fetchJSON(
+    `${api_url}/user/${id}/upload`,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
+      method: 'PUT',
+      body: formData
     },
-    method: 'PUT',
-    body: formData
-  })
+    null
+  )
+
+  return `${api_url}/user/pictures/${res.filename}`
 }

@@ -5,14 +5,24 @@
     "slug": "alumnisystem-mobile",
     "privacy": "public",
     "sdkVersion": "29.0.0",
+    "ios": {
+      "bundleIdentifier": "com.rnd.alumnisystem"
+    },
+    "android": {
+      "package": "com.rnd.alumnisystem"
+    },
     "platforms": ["ios", "android"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode": "contain",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
+    },
+    "androidStatusBar": {
+      "barStyle": "light-content",
+      "backgroundColor": "#000"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -22,5 +32,5 @@
       "supportsTablet": true
     }
   },
-  "api_url": "http://192.168.1.2:3000/api"
+  "api_url": "http://neonspectrum.xyz:4321/api"
 }

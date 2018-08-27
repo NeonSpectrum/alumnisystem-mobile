@@ -11,8 +11,9 @@ import {
   TouchableOpacity,
   AsyncStorage
 } from 'react-native'
+import { connect } from 'react-redux'
 import Loading from '../Components/Loading.component.js'
-import { login } from '../Controllers/User.controller'
+import { login, checkSession } from '../Controllers/User.controller'
 
 class LoginScreen extends Component {
   static navigationOptions = { header: null }
@@ -22,21 +23,30 @@ class LoginScreen extends Component {
     this.state = {
       id: null,
       code: null,
-      logging: false,
-      loading: false
+      loading: true
     }
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  async componentDidMount() {
-    this.setState({ loading: true })
-    let [id, token] = await Promise.all([AsyncStorage.getItem('id'), AsyncStorage.getItem('token')])
-    this.setState({ loading: false }, () => {
-      if (id && token) {
-        this.goToDrawer()
-      }
-    })
+  componentDidMount() {
+    let { id, token } = this.props.auth || {}
+    if (id && token) {
+      this.goToDrawer()
+    } else {
+      this.setState({
+        loading: false
+      })
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    let { isLogged, error } = props
+    if (isLogged) {
+      this.goToDrawer()
+    } else if (error) {
+      alert(error)
+    }
   }
 
   goToDrawer() {
@@ -56,23 +66,14 @@ class LoginScreen extends Component {
 
   handleSubmit() {
     let { id, code } = this.state
-    this.setState({ logging: true })
-    login(id, code)
-      .then(() => {
-        this.setState({ logging: false }, () => {
-          this.goToDrawer()
-        })
-      })
-      .catch(err => {
-        this.setState({ logging: false })
-        alert(err)
-      })
+    this.props.login(id, code)
   }
 
   render() {
-    let { logging, loading } = this.state
+    let { loading } = this.state
+    let { logging } = this.props
     return loading ? (
-      <Loading />
+      <Loading background={true} />
     ) : (
       <ImageBackground source={require('../../assets/background.jpg')} style={styles.background}>
         <View style={styles.container}>
@@ -106,7 +107,7 @@ class LoginScreen extends Component {
             <Text style={styles.buttonText}>{logging ? 'Logging in...' : 'Login'}</Text>
           </TouchableOpacity>
           <Text style={styles.registerText}>
-            Haven't sign up yet?{' '}
+            Haven't signed up yet?{' '}
             <Text
               style={styles.link}
               onPress={() => {
@@ -191,4 +192,17 @@ const styles = StyleSheet.create({
   }
 })
 
-export default LoginScreen
+const mapStateToProps = ({ UserReducer }) => {
+  let { auth, login } = UserReducer
+  return { auth, ...login } || {}
+}
+
+const mapDispatchToProps = {
+  checkSession,
+  login
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginScreen)
