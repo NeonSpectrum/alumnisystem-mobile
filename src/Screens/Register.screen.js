@@ -10,7 +10,6 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
-  KeyboardAvoidingView,
   Keyboard
 } from 'react-native'
 import DateTimePicker from 'react-native-modal-datetime-picker'
@@ -60,7 +59,13 @@ class RegisterScreen extends Component {
 
   handleSubmit() {
     let { info } = this.state
-    this.props.register(info)
+    let { id, code, firstname, lastname, birthday, course, yearGraduated } = info
+    if (!id || !code || !firstname || !lastname || !birthday || !course || !yearGraduated) {
+      alert('Please fill out all fields.')
+    } else {
+      info.birthday = moment(info.birthday).format('YYYY-MM-DD')
+      this.props.register(info)
+    }
   }
 
   showCalendar() {
@@ -87,97 +92,96 @@ class RegisterScreen extends Component {
   }
 
   render() {
-    let { registering, calendar, info } = this.state
+    let { calendar, info } = this.state
+    let { registering } = this.props
     return (
-      <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.background}>
-          <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-            <Text style={styles.headerText}>Registration Page</Text>
-            <Text style={styles.label}>Student Number</Text>
+      <ImageBackground source={require('../../assets/background.jpg')} style={styles.background}>
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+          <Text style={styles.headerText}>Registration Page</Text>
+          <Text style={styles.label}>Student Number</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Student Number"
+            keyboardType="numeric"
+            maxLength={11}
+            onChangeText={e => this.handleChange('id', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+          />
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Access Code"
+            onChangeText={e => this.handleChange('code', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+            secureTextEntry
+            onSubmitEditing={this.handleSubmit}
+          />
+          <Text style={styles.label}>First Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            onChangeText={e => this.handleChange('firstname', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+          />
+          <Text style={styles.label}>Last Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Last Name"
+            onChangeText={e => this.handleChange('lastname', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+          />
+          <Text style={styles.label}>Birthday</Text>
+          <TouchableOpacity
+            style={{
+              alignSelf: 'stretch'
+            }}
+            onPress={this.showCalendar}
+            activeOpacity={1}
+          >
             <TextInput
+              ref={ref => (this.birthdayInput = ref)}
               style={styles.input}
-              placeholder="Student Number"
-              keyboardType="numeric"
-              maxLength={11}
-              onChangeText={e => this.handleChange('id', e)}
+              placeholder="Birthday"
               underlineColorAndroid="transparent"
-              selectTextOnFocus
               clearButtonMode="while-editing"
+              editable={false}
+              value={info.birthday ? moment(info.birthday).format('MMMM D, YYYY') : ''}
             />
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Access Code"
-              onChangeText={e => this.handleChange('code', e)}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              clearButtonMode="while-editing"
-              secureTextEntry
-              onSubmitEditing={this.handleSubmit}
-            />
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Last Name"
-              onChangeText={e => this.handleChange('firstname', e)}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              clearButtonMode="while-editing"
-            />
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Last Name"
-              onChangeText={e => this.handleChange('lastname', e)}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              clearButtonMode="while-editing"
-            />
-            <Text style={styles.label}>Birthday</Text>
-            <TouchableOpacity
-              style={{
-                alignSelf: 'stretch'
-              }}
-              onPress={this.showCalendar}
-              activeOpacity={1}
-            >
-              <TextInput
-                ref={ref => (this.birthdayInput = ref)}
-                style={styles.input}
-                placeholder="Birthday"
-                underlineColorAndroid="transparent"
-                clearButtonMode="while-editing"
-                editable={false}
-                value={info.birthday ? moment(info.birthday).format('MMMM D, YYYY') : ''}
-              />
-            </TouchableOpacity>
-            <Text style={styles.label}>Course</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Course"
-              onChangeText={e => this.handleChange('course', e)}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              clearButtonMode="while-editing"
-            />
-            <Text style={styles.label}>Year Graduated</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Year Graduated"
-              keyboardType="numeric"
-              maxLength={4}
-              onChangeText={e => this.handleChange('yearGraduated', e)}
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              clearButtonMode="while-editing"
-            />
-            <DateTimePicker isVisible={calendar} onConfirm={this.applyCalendar} onCancel={this.hideCalendar} />
-            <TouchableOpacity style={styles.button} onPress={this.handleSubmit} disabled={registering}>
-              <Text style={styles.buttonText}>{registering ? 'Processing...' : 'Register'}</Text>
-            </TouchableOpacity>
-          </ScrollView>
-        </ImageBackground>
-      </KeyboardAvoidingView>
+          </TouchableOpacity>
+          <Text style={styles.label}>Course</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Course"
+            onChangeText={e => this.handleChange('course', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+          />
+          <Text style={styles.label}>Year Graduated</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Year Graduated"
+            keyboardType="numeric"
+            maxLength={4}
+            onChangeText={e => this.handleChange('yearGraduated', e)}
+            underlineColorAndroid="transparent"
+            selectTextOnFocus
+            clearButtonMode="while-editing"
+          />
+          <DateTimePicker isVisible={calendar} onConfirm={this.applyCalendar} onCancel={this.hideCalendar} />
+          <TouchableOpacity style={styles.button} onPress={this.handleSubmit} disabled={registering}>
+            <Text style={styles.buttonText}>{registering ? 'Processing...' : 'Register'}</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </ImageBackground>
     )
   }
 }

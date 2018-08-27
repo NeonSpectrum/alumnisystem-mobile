@@ -1,6 +1,5 @@
 import { ImagePicker, Permissions } from 'expo'
 import { AsyncStorage } from 'react-native'
-import { fetchJSON } from '../Functions'
 import { api_url } from '../../app'
 
 export const UPLOAD = 'LOAD'
@@ -18,19 +17,15 @@ export default function UploadReducer(state = {}, action) {
       if (success) {
         return {
           ...state,
-          drawer: {
-            loading: false,
-            path: `${api_url}/user/pictures/${filename}`
-          }
+          loading: false,
+          path: `${api_url}/user/pictures/${filename}`
         }
       }
     case UPLOAD_FAIL:
       return {
         ...state,
-        drawer: {
-          loading: false,
-          error: 'Error while fetching user data'
-        }
+        loading: false,
+        error: 'Error while fetching user data'
       }
     default:
       return state

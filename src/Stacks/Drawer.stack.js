@@ -149,9 +149,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = ({ UserReducer, UploadReducer }) => {
   let { drawer } = UserReducer
-  if (drawer) {
-    if (drawer.path) uri = { uri: drawer.path }
-    return { loading: drawer.loading }
+  if (drawer || UploadReducer.path) {
+    if (UploadReducer.path) uri = { uri: UploadReducer.path }
+    else if (drawer.path) uri = { uri: drawer.path }
+
+    return { loading: drawer.loading || UploadReducer.loading || false }
   }
   return {}
 }

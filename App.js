@@ -11,6 +11,7 @@ import axios from 'axios'
 import axiosMiddleware from 'redux-axios-middleware'
 
 import MainStack from './src/Stacks/Main.stack'
+
 import UserReducer from './src/Reducers/User.reducer'
 import UploadReducer from './src/Reducers/Upload.reducer'
 
@@ -23,10 +24,18 @@ const client = axios.create({
   responseType: 'json'
 })
 
-const reducers = combineReducers({
+const appReducer = combineReducers({
   UserReducer,
   UploadReducer
 })
+
+const rootReducer = (state, action) => {
+  if (action.type === 'INIT') {
+    state = { UserReducer: { auth: state.UserReducer.auth } }
+  }
+
+  return appReducer(state, action)
+}
 
 const store = createStore(
   persistReducer(
@@ -34,7 +43,7 @@ const store = createStore(
       key: 'root',
       storage
     },
-    reducers
+    rootReducer
   ),
   applyMiddleware(axiosMiddleware(client), thunk)
 )

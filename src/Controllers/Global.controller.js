@@ -1,4 +1,4 @@
-const fetchHTML = (url, headers, timeout = 10000) => {
+export function fetchHTML(url, headers, timeout = 10000) {
   return new Promise((resolve, reject) => {
     fetch(url, {
       headers: {
@@ -15,7 +15,7 @@ const fetchHTML = (url, headers, timeout = 10000) => {
   })
 }
 
-const fetchJSON = (url, headers, timeout = 10000) => {
+export function fetchJSON(url, headers, timeout = 10000) {
   return new Promise((resolve, reject) => {
     fetch(url, {
       headers: {
@@ -32,4 +32,8 @@ const fetchJSON = (url, headers, timeout = 10000) => {
   })
 }
 
-export { fetchJSON, fetchHTML }
+export function init() {
+  return {
+    type: 'INIT'
+  }
+}

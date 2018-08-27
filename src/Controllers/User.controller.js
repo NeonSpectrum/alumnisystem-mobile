@@ -1,7 +1,6 @@
 import { LOGIN, GET_DATA, GET_PROFILE_PATH, CHECK_SESSION, LOGOUT, REGISTER } from '../Reducers/User.reducer'
 
 import { AsyncStorage } from 'react-native'
-import { fetchJSON } from '../Functions'
 import { api_url } from '../../app'
 
 export function login(id, code) {
@@ -35,11 +34,7 @@ export function register(info) {
 
 export function logout() {
   return {
-    type: LOGOUT,
-    payload: {
-      auth: null,
-      drawer: {}
-    }
+    type: LOGOUT
   }
 }
 

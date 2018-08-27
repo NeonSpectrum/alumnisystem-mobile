@@ -13,6 +13,8 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import Loading from '../Components/Loading.component.js'
+
+import { init } from '../Controllers/Global.controller'
 import { login, checkSession } from '../Controllers/User.controller'
 
 class LoginScreen extends Component {
@@ -30,6 +32,8 @@ class LoginScreen extends Component {
   }
 
   componentDidMount() {
+    this.props.init()
+
     let { id, token } = this.props.auth || {}
     if (id && token) {
       this.goToDrawer()
@@ -193,13 +197,15 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = ({ UserReducer }) => {
+  console.log()
   let { auth, login } = UserReducer
   return { auth, ...login } || {}
 }
 
 const mapDispatchToProps = {
   checkSession,
-  login
+  login,
+  init
 }
 
 export default connect(

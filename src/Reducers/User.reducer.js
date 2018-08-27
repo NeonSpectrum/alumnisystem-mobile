@@ -34,7 +34,7 @@ export default function UserReducer(state = {}, action) {
   } else if (type === CHECK_SESSION) {
     return { ...state, login: action.payload }
   } else if (type === LOGOUT) {
-    return { ...state, ...action.payload }
+    return {}
   } else {
     return state
   }
@@ -98,7 +98,7 @@ function processRegister(state, action) {
       } else {
         obj = {
           register: {
-            logging: false,
+            registering: false,
             error: 'Already Exists.'
           }
         }
@@ -107,7 +107,7 @@ function processRegister(state, action) {
     case REGISTER_FAIL:
       obj = {
         register: {
-          logging: false,
+          registering: false,
           error: 'Error while fetching the data'
         }
       }
