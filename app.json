@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Alumni System",
-    "description": "This project is really great.",
+    "description": "Mobile version for alumni system.",
     "slug": "alumnisystem-mobile",
     "privacy": "public",
     "sdkVersion": "29.0.0",
@@ -25,12 +25,25 @@
       "backgroundColor": "#b30000"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "checkAutomatically": "ON_ERROR_RECOVERY"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "neonspectrum",
+            "project": "alumni-system",
+            "authToken": "a15e6df4c00711e8b0834201c0a8d03b"
+          }
+        }
+      ]
     }
   },
-  "api_url": "http://neonspectrum.xyz:4321/api"
+  "api_url": "https://neonspectrum.xyz:4321/api",
+  "dev_api_url": "http://192.168.1.2:3000/api"
 }

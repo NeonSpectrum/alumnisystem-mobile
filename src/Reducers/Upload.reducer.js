@@ -1,14 +1,12 @@
 import { ImagePicker, Permissions } from 'expo'
 import { AsyncStorage } from 'react-native'
-import { api_url } from '../../app'
+import { API_URL } from '../../App'
 
-export const UPLOAD = 'LOAD'
-export const UPLOAD_SUCCESS = 'LOAD_SUCCESS'
-export const UPLOAD_FAIL = 'LOAD_FAIL'
+export const UPLOAD = 'UPLOAD'
+export const UPLOAD_SUCCESS = 'UPLOAD_SUCCESS'
+export const UPLOAD_FAIL = 'UPLOAD_FAIL'
 
 export default function UploadReducer(state = {}, action) {
-  console.log(action.type)
-
   switch (action.type) {
     case UPLOAD:
       return { ...state, loading: true }
@@ -18,7 +16,7 @@ export default function UploadReducer(state = {}, action) {
         return {
           ...state,
           loading: false,
-          path: `${api_url}/user/pictures/${filename}`
+          path: `${API_URL}/user/pictures/${filename}`
         }
       }
     case UPLOAD_FAIL:
@@ -65,7 +63,36 @@ export function uploadPhoto(uri) {
       payload: {
         request: {
           method: 'PUT',
-          url: `/user/${id}/upload`,
+          url: `/user/${id}/upload/profile`,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+          data: formData
+        }
+      }
+    })
+  }
+}
+
+export function uploadSignature(uri) {
+  return (dispatch, getState) => {
+    let fileType = uri.split('.').pop()
+
+    let formData = new FormData()
+    formData.append('photo', {
+      uri,
+      name: `photo.${fileType}`,
+      type: `image/${fileType}`
+    })
+
+    let { id } = getState().UserReducer.auth
+
+    dispatch({
+      type: UPLOAD,
+      payload: {
+        request: {
+          method: 'PUT',
+          url: `/user/${id}/upload/signature`,
           headers: {
             'Content-Type': 'multipart/form-data'
           },

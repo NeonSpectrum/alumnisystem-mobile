@@ -1,4 +1,4 @@
-import { api_url } from '../../app'
+import { API_URL } from '../../App'
 
 export const LOGIN = 'LOGIN'
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
@@ -19,18 +19,23 @@ export const GET_PROFILE_PATH = 'GET_PROFILE_PATH'
 export const GET_PROFILE_PATH_SUCCESS = 'GET_PROFILE_PATH_SUCCESS'
 export const GET_PROFILE_PATH_FAIL = 'GET_PROFILE_PATH_FAIL'
 
+export const GET_CARDS = 'GET_CARDS'
+export const GET_CARDS_SUCCESS = 'GET_CARDS_SUCCESS'
+export const GET_CARDS_FAIL = 'GET_CARDS_FAIL'
+
 export default function UserReducer(state = {}, action) {
   let { type } = action
-  console.log(type)
 
-  if (type.startsWith('LOGIN')) {
+  if (type.startsWith(LOGIN)) {
     return processLogin(state, action)
-  } else if (type.startsWith('REGISTER')) {
+  } else if (type.startsWith(REGISTER)) {
     return processRegister(state, action)
-  } else if (type.startsWith('GET_DATA')) {
+  } else if (type.startsWith(GET_DATA)) {
     return processUser(state, action)
-  } else if (type.startsWith('GET_PROFILE_PATH')) {
+  } else if (type.startsWith(GET_PROFILE_PATH)) {
     return processUserProfilePath(state, action)
+  } else if (type.startsWith(GET_CARDS)) {
+    return processCards(state, action)
   } else if (type === CHECK_SESSION) {
     return { ...state, login: action.payload }
   } else if (type === LOGOUT) {
@@ -128,7 +133,10 @@ function processUser(state, action) {
       let data = action.payload.data
       if (data.success) {
         data.info.ProfilePath = data.info.ProfileFileName
-          ? `${api_url}/user/pictures/${data.info.ProfileFileName}`
+          ? `${API_URL}/user/pictures/${data.info.ProfileFileName}`
+          : null
+        data.info.SignaturePath = data.info.SignatureFileName
+          ? `${API_URL}/user/pictures/${data.info.SignatureFileName}`
           : null
         obj = {
           loading: false,
@@ -157,7 +165,7 @@ function processUserProfilePath(state, action) {
       let { ProfileFileName } = action.payload.data.info
       obj = {
         loading: false,
-        path: ProfileFileName ? `${api_url}/user/pictures/${ProfileFileName}` : null
+        path: ProfileFileName ? `${API_URL}/user/pictures/${ProfileFileName}` : null
       }
       break
     case GET_PROFILE_PATH_FAIL:
@@ -171,5 +179,32 @@ function processUserProfilePath(state, action) {
   return {
     ...state,
     drawer: obj
+  }
+}
+
+function processCards(state, action) {
+  var obj = {}
+  switch (action.type) {
+    case GET_CARDS:
+      obj = { loading: true }
+      break
+    case GET_CARDS_SUCCESS:
+      obj = {
+        loading: false,
+        id: JSON.parse(action.payload.config.data).id,
+        data: action.payload.data
+      }
+      break
+    case GET_CARDS_FAIL:
+      obj = {
+        loading: false,
+        error: 'Error while fetching user data'
+      }
+      break
+  }
+
+  return {
+    ...state,
+    cards: obj
   }
 }

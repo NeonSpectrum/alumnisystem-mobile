@@ -7,11 +7,12 @@ import {
   Button,
   Image,
   TouchableOpacity,
+  TouchableHighlight,
   ScrollView,
   Alert,
   AsyncStorage
 } from 'react-native'
-import { NavigationActions, StackActions } from 'react-navigation'
+import { createStackNavigator, NavigationActions, StackActions } from 'react-navigation'
 import { connect } from 'react-redux'
 import Moment from 'react-moment'
 import Icon from 'react-native-vector-icons/Octicons'
@@ -22,6 +23,8 @@ import Error from '../Components/Error.component'
 
 import { fetchUserData, fetchProfilePath } from '../Controllers/User.controller'
 import { takePhoto, uploadPhoto } from '../Reducers/Upload.reducer'
+
+import { API_URL } from '../../App'
 
 class DashboardScreen extends Component {
   constructor(props) {
@@ -47,11 +50,11 @@ class DashboardScreen extends Component {
   }
 
   render() {
-    let { loading = true, data, error } = this.props
+    let { loading = true, data, error, navigation } = this.props
     if (loading) return <Loading />
     else if (error) return <Error text="Cannot connect to server!" onRefresh={this.fetchData} />
     else {
-      let { ID, FirstName, LastName, Birthday, Course, YearGraduated, ProfilePath } = data
+      let { ID, FirstName, LastName, Birthday, Course, YearGraduated, ProfilePath, SignaturePath } = data
       return (
         <PTRView onRefresh={this.fetchData}>
           <ScrollView>
@@ -69,7 +72,7 @@ class DashboardScreen extends Component {
                     style={styles.circlePicture}
                     source={ProfilePath ? { uri: ProfilePath } : require('../../assets/user-default.png')}
                   />
-                  <TouchableOpacity style={styles.editButton} onPress={this.takePhoto}>
+                  <TouchableOpacity style={styles.editButton}>
                     <Icon
                       name="pencil"
                       size={25}
@@ -97,6 +100,20 @@ class DashboardScreen extends Component {
                   <Moment format="MMMM D, YYYY" element={Text} style={styles.infoValue}>
                     {Birthday}
                   </Moment>
+                </View>
+                <View style={styles.infoContainer}>
+                  <Text style={styles.infoLabel}>
+                    Signature
+                    {'  '}
+                    <Text
+                      onPress={() => {
+                        navigation.push('signatureScreen')
+                      }}
+                    >
+                      <Icon name="pencil" size={15} color="black" />
+                    </Text>
+                  </Text>
+                  <Image source={{ uri: SignaturePath }} style={[styles.container, { height: 200 }]} />
                 </View>
               </View>
             </View>
@@ -153,7 +170,7 @@ const styles = StyleSheet.create({
   },
   details: {
     fontSize: 15,
-    color: '#ccc',
+    color: '#aaa',
     textAlign: 'center'
   },
   infoContainer: {

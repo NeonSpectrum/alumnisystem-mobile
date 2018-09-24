@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { StyleSheet, Text, TextInput, View, Button, Image, TouchableOpacity, ScrollView } from 'react-native'
 import Icon from 'react-native-vector-icons/Octicons'
 
+import Error from '../Components/Error.component'
+
 class SettingsScreen extends Component {
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
-          <Text>Settings</Text>
-        </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Error text="Work in progress..." />
       </ScrollView>
     )
   }

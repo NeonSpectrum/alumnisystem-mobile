@@ -1,7 +1,7 @@
-import { LOGIN, GET_DATA, GET_PROFILE_PATH, CHECK_SESSION, LOGOUT, REGISTER } from '../Reducers/User.reducer'
+import { LOGIN, GET_DATA, GET_PROFILE_PATH, CHECK_SESSION, LOGOUT, REGISTER, GET_CARDS } from '../Reducers/User.reducer'
 
 import { AsyncStorage } from 'react-native'
-import { api_url } from '../../app'
+import { API_URL } from '../../App'
 
 export function login(id, code) {
   return {
@@ -87,6 +87,21 @@ export function fetchProfilePath() {
           headers: {
             Authorization: 'Bearer ' + token
           }
+        }
+      }
+    })
+  }
+}
+
+export function fetchCard() {
+  return (dispatch, getState) => {
+    const { id, token } = getState().UserReducer.auth
+    dispatch({
+      type: GET_CARDS,
+      payload: {
+        request: {
+          url: `/templates`,
+          data: { id }
         }
       }
     })

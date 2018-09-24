@@ -9,7 +9,8 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
-  AsyncStorage
+  ScrollView,
+  KeyboardAvoidingView
 } from 'react-native'
 import { connect } from 'react-redux'
 import Loading from '../Components/Loading.component.js'
@@ -80,7 +81,7 @@ class LoginScreen extends Component {
       <Loading background={true} />
     ) : (
       <ImageBackground source={require('../../assets/background.jpg')} style={styles.background}>
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container}>
           <View style={styles.logoContainer}>
             <Image source={require('../../assets/logo.png')} style={styles.logo} />
             <Text style={styles.logoText}>ALUMNI</Text>
@@ -121,7 +122,7 @@ class LoginScreen extends Component {
               Create a new account.
             </Text>
           </Text>
-        </View>
+        </KeyboardAvoidingView>
       </ImageBackground>
     )
   }
@@ -197,7 +198,6 @@ const styles = StyleSheet.create({
 })
 
 const mapStateToProps = ({ UserReducer }) => {
-  console.log()
   let { auth, login } = UserReducer
   return { auth, ...login } || {}
 }
